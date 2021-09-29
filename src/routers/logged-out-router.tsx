@@ -1,5 +1,5 @@
 import React from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 interface IForm {
   email: string;
@@ -34,11 +34,14 @@ export const LoggedOutRouter = () => {
             type="email"
             placeholder="email"
           />
-          {errors.email && "this is required"}
+          {errors.email?.message && (
+            <span className="font-bold text-red-700">
+              {errors.email?.message}
+            </span>
+          )}{" "}
           {errors.email?.type === "pattern" && (
             <span className="font-bold text-red-700">only gmail allowed</span>
           )}
-          <input type="submit"></input>
         </div>
         <div>
           <input
@@ -48,6 +51,7 @@ export const LoggedOutRouter = () => {
             placeholder="password"
           />
         </div>
+        <button className="bg-yellow-300 text-white">Submit</button>
       </form>
     </div>
   );
