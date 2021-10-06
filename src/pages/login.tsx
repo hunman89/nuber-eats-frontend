@@ -8,7 +8,7 @@ import {
 } from "../__generated__/LoginMutation";
 
 const LOGIN_MUTAION = gql`
-  mutation LoginMutation($loginInput: LoginInput!) {
+  mutation LoginMutation($LoginInput: LoginInput!) {
     login(input: $LoginInput) {
       ok
       token
@@ -29,17 +29,27 @@ export const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginForm>();
-  const [loginMutation, { loading, error, data }] = useMutation<
+  const onCompleted = (data: LoginMutation) => {
+    const {
+      login: { ok, token },
+    } = data;
+    if (ok) {
+      console.log(token);
+    }
+  };
+  const [loginMutation, { data: loginMutarionResult, loading }] = useMutation<
     LoginMutation,
     LoginMutationVariables
-  >(LOGIN_MUTAION);
+  >(LOGIN_MUTAION, { onCompleted });
   const onSubmit = () => {
-    const { email, password } = getValues();
-    loginMutation({
-      variables: {
-        loginInput: { email, password },
-      },
-    });
+    if (!loading) {
+      const { email, password } = getValues();
+      loginMutation({
+        variables: {
+          LoginInput: { email, password },
+        },
+      });
+    }
   };
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
@@ -72,7 +82,12 @@ export const Login = () => {
           {errors.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 chars." />
           )}
-          <button className="btn mt-3">Log In</button>
+          <button className="btn mt-3">
+            {loading ? "Loading..." : "Log In"}
+          </button>
+          {loginMutarionResult?.login.error && (
+            <FormError errorMessage={loginMutarionResult.login.error} />
+          )}
         </form>
       </div>
     </div>
