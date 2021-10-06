@@ -3,13 +3,13 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import {
-  PotatoMutation,
-  PotatoMutationVariables,
-} from "../__generated__/PotatoMutation";
+  LoginMutation,
+  LoginMutationVariables,
+} from "../__generated__/LoginMutation";
 
 const LOGIN_MUTAION = gql`
-  mutation PotatoMutation($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
+  mutation LoginMutation($loginInput: LoginInput!) {
+    login(input: $LoginInput) {
       ok
       token
       error
@@ -30,15 +30,14 @@ export const Login = () => {
     formState: { errors },
   } = useForm<ILoginForm>();
   const [loginMutation, { loading, error, data }] = useMutation<
-    PotatoMutation,
-    PotatoMutationVariables
+    LoginMutation,
+    LoginMutationVariables
   >(LOGIN_MUTAION);
   const onSubmit = () => {
     const { email, password } = getValues();
     loginMutation({
       variables: {
-        email,
-        password,
+        loginInput: { email, password },
       },
     });
   };
