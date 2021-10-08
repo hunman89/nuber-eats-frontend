@@ -1,6 +1,8 @@
 import { gql, useMutation } from "@apollo/client";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { Button } from "../components/button";
 import { FormError } from "../components/form-error";
 import nuberLogo from "../images/logo.svg";
 import {
@@ -28,8 +30,8 @@ export const Login = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors },
-  } = useForm<ILoginForm>();
+    formState: { isValid, errors },
+  } = useForm<ILoginForm>({ mode: "onBlur" });
   const onCompleted = (data: LoginMutation) => {
     const {
       login: { ok, token },
@@ -59,7 +61,7 @@ export const Login = () => {
         <h4 className="w-full font-medium text-left text-3xl">Welcome back</h4>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid gap-3 mt-5 w-full"
+          className="grid gap-3 mt-5 w-full mb-3"
         >
           <input
             {...register("email", { required: "Email is required" })}
@@ -84,11 +86,17 @@ export const Login = () => {
           {errors.password?.type === "minLength" && (
             <FormError errorMessage="Password must be more than 10 chars." />
           )}
-          <button className="btn">{loading ? "Loading..." : "Log In"}</button>
+          <Button canClick={isValid} loading={loading} actionText={"Login"} />
           {loginMutarionResult?.login.error && (
             <FormError errorMessage={loginMutarionResult.login.error} />
           )}
         </form>
+        <div>
+          New to Nuber?{" "}
+          <Link to="/create-account" className=" text-lime-600 hover:underline">
+            Create Account
+          </Link>
+        </div>
       </div>
     </div>
   );
