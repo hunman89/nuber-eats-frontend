@@ -2,10 +2,14 @@ import { gql, useMutation } from "@apollo/client";
 import React from "react";
 import Helmet from "react-helmet";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Button } from "../components/button";
 import { FormError } from "../components/form-error";
 import nuberLogo from "../images/logo.svg";
+import {
+  createAccountMutation,
+  createAccountMutationVariables,
+} from "../__generated__/createAccountMutation";
 import { UserRole } from "../__generated__/globalTypes";
 
 const CREATE_ACCOUNT_MUTAION = gql`
@@ -27,17 +31,39 @@ export const CreateAccount = () => {
   const {
     register,
     getValues,
-    watch,
     handleSubmit,
     formState: { isValid, errors },
   } = useForm<ICreateAccountForm>({
     mode: "onBlur",
     defaultValues: { role: UserRole.Client },
   });
+  const history = useHistory();
+  const onCompleted = (data: createAccountMutation) => {
+    const {
+      createAccount: { ok },
+    } = data;
+    if (ok) {
+      history.push("/login");
+    }
+  };
+  const [
+    createAccountMutation,
+    { loading, data: createAccountMutationResult },
+  ] = useMutation<createAccountMutation, createAccountMutationVariables>(
+    CREATE_ACCOUNT_MUTAION,
+    { onCompleted }
+  );
+  const onSubmit = () => {
+    const { email, password, role } = getValues();
+    if (!loading) {
+      createAccountMutation({
+        variables: {
+          createAccountInput: { email, password, role },
+        },
+      });
+    }
+  };
 
-  const [createAccountMutation] = useMutation(CREATE_ACCOUNT_MUTAION, {});
-  const onSubmit = () => {};
-  console.log(watch());
   return (
     <div className="h-screen flex items-center flex-col mt-10 lg:mt-28">
       <Helmet>
@@ -56,7 +82,7 @@ export const CreateAccount = () => {
             {...register("email", {
               required: "Email is required",
               pattern:
-                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             })}
             type="email"
             placeholder="Email"
@@ -89,9 +115,14 @@ export const CreateAccount = () => {
           </select>
           <Button
             canClick={isValid}
-            loading={false}
+            loading={loading}
             actionText={"Create Account"}
           />
+          {createAccountMutationResult?.createAccount.error && (
+            <FormError
+              errorMessage={createAccountMutationResult.createAccount.error}
+            />
+          )}
         </form>
         <div>
           Already have an account?{" "}
