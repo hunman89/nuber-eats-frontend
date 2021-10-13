@@ -1,17 +1,15 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { isLoggedInVar } from "../apollo";
 import { Restaurants } from "../pages/client/restaurants";
 import { meQuery } from "../__generated__/meQuery";
 
-const ClientRoutes = () => (
-  <>
-    <Route path="/" exact>
-      <Restaurants />
-    </Route>
-  </>
-);
+const ClientRoutes = [
+  <Route path="/" exact>
+    <Restaurants />
+  </Route>,
+];
 
 const ME_QUERY = gql`
   query meQuery {
@@ -37,7 +35,10 @@ export const LoggedInRouter = () => {
 
   return (
     <BrowserRouter>
-      <Switch>{data.me.role === "Client" && <ClientRoutes />}</Switch>
+      <Switch>
+        {data.me.role === "Client" && ClientRoutes}
+        <Redirect to="/" />
+      </Switch>
     </BrowserRouter>
   );
 };
