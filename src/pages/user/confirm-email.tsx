@@ -20,5 +20,12 @@ export const ConfirmEmail = () => {
     verifyEmail,
     verifyEmailVariables
   >(VERIFY_EMAIL_MUTATION);
-  return <h1>confirm</h1>;
+  return (
+    <div className="mt-52 flex flex-col items-center justify-center">
+      <h2 className="text-lg mb-1 font-medium">Confirming... email...</h2>
+      <h4 className="text-gray-700 text-sm">
+        Please wait, don't close this page...
+      </h4>
+    </div>
+  );
 };
