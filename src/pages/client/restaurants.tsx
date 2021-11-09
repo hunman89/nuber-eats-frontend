@@ -1,4 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
+import { spawn } from "child_process";
 import React from "react";
 import {
   restaurantsPageQuery,
@@ -38,7 +39,7 @@ const RESTAURANTS_QUERY = gql`
 `;
 
 export const Restaurants = () => {
-  const { data, loading, error } = useQuery<
+  const { data, loading } = useQuery<
     restaurantsPageQuery,
     restaurantsPageQueryVariables
   >(RESTAURANTS_QUERY, {
@@ -48,5 +49,32 @@ export const Restaurants = () => {
       },
     },
   });
-  return <h1>restaurants</h1>;
+  return (
+    <div>
+      <form className="bg-gray-800 w-full py-40 flex items-center justify-center">
+        <input
+          type="Search"
+          className="input w-3/12 rounded-md border-0"
+          placeholder="Search restaurants..."
+        />
+      </form>
+      {!loading && (
+        <div className="max-w-screen-3xl mx-auto mt-8">
+          <div className="flex justify-around max-w-sm mx-auto">
+            {data?.allCategories.categories?.map((category) => (
+              <div className="flex flex-col items-center cursor-pointer">
+                <div
+                  className=" w-14 h-14 rounded-full hover:bg-gray-100 bg-cover"
+                  style={{ backgroundImage: `url(${category.coverImg})` }}
+                ></div>
+                <span className="mt-3 text-sm text-center font-bold">
+                  {category.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
