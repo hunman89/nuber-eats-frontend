@@ -7,7 +7,7 @@ interface IRestaurantProps {
   categoryName?: string;
 }
 
-export const Restaurnat: React.FC<IRestaurantProps> = ({
+export const Restaurant: React.FC<IRestaurantProps> = ({
   id,
   coverImg,
   name,
