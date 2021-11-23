@@ -58,6 +58,7 @@
   "devDependencies": {
     "@types/react-router-dom": "^5.3.0",
     "autoprefixer": "^10.3.6",
+    "mock-apollo-client": "^1.2.0",
     "postcss": "^8.3.8",
     "tailwindcss": "^2.2.16"
   },
