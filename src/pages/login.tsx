@@ -13,7 +13,7 @@ import {
   LoginMutationVariables,
 } from "../__generated__/LoginMutation";
 
-const LOGIN_MUTAION = gql`
+export const LOGIN_MUTAION = gql`
   mutation LoginMutation($LoginInput: LoginInput!) {
     login(input: $LoginInput) {
       ok
@@ -97,9 +97,6 @@ export const Login = () => {
           ></input>
           {errors.password?.message && (
             <FormError errorMessage={errors.password?.message} />
-          )}
-          {errors.password?.type === "minLength" && (
-            <FormError errorMessage="Password must be more than 10 chars." />
           )}
           <Button canClick={isValid} loading={loading} actionText={"Login"} />
           {loginMutarionResult?.login.error && (
