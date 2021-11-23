@@ -47,7 +47,7 @@ describe("<Login />", () => {
     expect(errorMessage).toHaveTextContent(/email is required/i);
   });
   it("display password required errord", async () => {
-    const { getByPlaceholderText, debug, getByRole } = renderResult;
+    const { getByPlaceholderText, getByRole } = renderResult;
     const email = getByPlaceholderText(/email/i);
     const submitBtn = getByRole("button");
     await waitFor(() => {
@@ -63,7 +63,7 @@ describe("<Login />", () => {
       password: "123",
     };
 
-    const { getByPlaceholderText, debug, getByRole } = renderResult;
+    const { getByPlaceholderText, getByRole } = renderResult;
 
     const email = getByPlaceholderText(/email/i);
     const password = getByPlaceholderText(/password/i);
@@ -71,10 +71,12 @@ describe("<Login />", () => {
 
     const mockedMutationResponse = jest.fn().mockResolvedValue({
       data: {
-        login: { ok: true, token: "XXX", error: null },
+        login: { ok: true, token: "XXX", error: "mutation-error" },
       },
     });
     mockedClient.setRequestHandler(LOGIN_MUTAION, mockedMutationResponse);
+
+    jest.spyOn(Storage.prototype, "setItem");
 
     await waitFor(() => {
       userEvent.type(email, formData.email);
@@ -89,5 +91,9 @@ describe("<Login />", () => {
         password: formData.password,
       },
     });
+
+    const errorMessage = getByRole("alert");
+    expect(errorMessage).toHaveTextContent(/mutation-error/i);
+    expect(localStorage.setItem).toHaveBeenCalledWith("nuber-token", "XXX");
   });
 });
