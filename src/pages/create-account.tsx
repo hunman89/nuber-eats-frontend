@@ -34,7 +34,7 @@ export const CreateAccount = () => {
     handleSubmit,
     formState: { isValid, errors },
   } = useForm<ICreateAccountForm>({
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: { role: UserRole.Client },
   });
   const history = useHistory();

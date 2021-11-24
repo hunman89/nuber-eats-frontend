@@ -34,7 +34,7 @@ export const Login = () => {
     getValues,
     handleSubmit,
     formState: { isValid, errors },
-  } = useForm<ILoginForm>({ mode: "onBlur" });
+  } = useForm<ILoginForm>({ mode: "onChange" });
   const onCompleted = (data: LoginMutation) => {
     const {
       login: { ok, token },
