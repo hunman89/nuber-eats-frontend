@@ -19,15 +19,7 @@ describe("Create Account", () => {
       const { operationName } = req.body;
       if (operationName && operationName === "createAccountMutation") {
         req.reply((res) => {
-          res.send({
-            data: {
-              createAccount: {
-                ok: true,
-                error: null,
-                __typename: "CreateAccountOutput",
-              },
-            },
-          });
+          res.send({ fixture: "auth/create-account.json" });
         });
       }
     });
