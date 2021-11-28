@@ -7,6 +7,7 @@ import { Category } from "../pages/client/category";
 import { Restaurant } from "../pages/client/reataurant";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
+import { AddRestaurant } from "../pages/owner/add-restaurants";
 import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
@@ -45,6 +46,10 @@ const restaurantRoutes = [
   {
     path: "/",
     component: <MyRestaurants />,
+  },
+  {
+    path: "/add-restaurants",
+    component: <AddRestaurant />,
   },
 ];
 
