@@ -8,6 +8,7 @@ import {
   createRestaurant,
   createRestaurantVariables,
 } from "../../__generated__/createRestaurant";
+import { MY_RESTAURANTS_QUERY } from "./my-restaurants";
 
 const CREATE_RESTAURANT_MUTATION = gql`
   mutation createRestaurant($input: CreateRestaurantInput!) {
@@ -34,14 +35,17 @@ export const AddRestaurant = () => {
       setUploading(false);
     }
   };
-  const [createRestaurantMutation, { loading, data }] = useMutation<
+  const [createRestaurantMutation, { data }] = useMutation<
     createRestaurant,
     createRestaurantVariables
-  >(CREATE_RESTAURANT_MUTATION, { onCompleted });
+  >(CREATE_RESTAURANT_MUTATION, {
+    onCompleted,
+    refetchQueries: [{ query: MY_RESTAURANTS_QUERY }],
+  });
   const {
     register,
     getValues,
-    formState: { errors, isValid },
+    formState: { isValid },
     handleSubmit,
   } = useForm<IFormProps>({ mode: "onChange" });
   const [uploading, setUploading] = useState(false);
