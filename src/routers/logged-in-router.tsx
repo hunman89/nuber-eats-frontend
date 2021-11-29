@@ -8,6 +8,7 @@ import { Restaurant } from "../pages/client/reataurant";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { AddRestaurant } from "../pages/owner/add-restaurants";
+import { MyRestaurant } from "../pages/owner/my-restaurant";
 import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
@@ -50,6 +51,10 @@ const restaurantRoutes = [
   {
     path: "/add-restaurants",
     component: <AddRestaurant />,
+  },
+  {
+    path: "/restaurants/:id",
+    component: <MyRestaurant />,
   },
 ];
 
