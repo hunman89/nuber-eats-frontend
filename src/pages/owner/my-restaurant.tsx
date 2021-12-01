@@ -3,11 +3,25 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
 import { Dish } from "../../components/dish";
-import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
+import {
+  DISH_FRAGMENT,
+  ORDER_FRAGMENT,
+  RESTAURANT_FRAGMENT,
+} from "../../fragments";
 import {
   myRestaurant,
   myRestaurantVariables,
 } from "../../__generated__/myRestaurant";
+import {
+  VictoryAxis,
+  VictoryBar,
+  VictoryChart,
+  VictoryLabel,
+  VictoryLine,
+  VictoryPie,
+  VictoryTheme,
+  VictoryVoronoiContainer,
+} from "victory";
 
 export const MY_RESTAURANT_QUERY = gql`
   query myRestaurant($input: MyRestaurantInput!) {
@@ -19,11 +33,15 @@ export const MY_RESTAURANT_QUERY = gql`
         menu {
           ...DishParts
         }
+        orders {
+          ...OrderParts
+        }
       }
     }
   }
   ${RESTAURANT_FRAGMENT}
   ${DISH_FRAGMENT}
+  ${ORDER_FRAGMENT}
 `;
 
 interface IParams {
@@ -42,6 +60,15 @@ export const MyRestaurant = () => {
       },
     }
   );
+  console.log(data);
+  const chartData = [
+    { x: 1, y: 3000 },
+    { x: 2, y: 1500 },
+    { x: 3, y: 1425 },
+    { x: 4, y: 2300 },
+    { x: 5, y: 7500 },
+    { x: 6, y: 3200 },
+  ];
   return (
     <div>
       <Helmet>
@@ -80,6 +107,33 @@ export const MyRestaurant = () => {
               ))}
             </div>
           )}
+        </div>
+        <div className="mt-20 mb-10">
+          <h4 className="text-center text-2xg font-medium">Sales</h4>
+          <div className="mx-auto">
+            <VictoryChart
+              containerComponent={<VictoryVoronoiContainer />}
+              width={window.innerWidth}
+              height={500}
+              padding={50}
+              theme={VictoryTheme.material}
+            >
+              <VictoryLine
+                labels={({ datum }) => `$${datum.y}`}
+                labelComponent={<VictoryLabel renderInPortal dy={-20} />}
+                data={data?.myRestaurant.restaurant?.orders.map((order) => ({
+                  x: order.createdAt,
+                  y: order.total,
+                }))}
+                interpolation="natural"
+                style={{ data: { strokeWidth: 5 } }}
+              />
+              <VictoryAxis
+                style={{ tickLabels: { fontSize: 20 } as any }}
+                tickFormat={(tick) => new Date(tick).toLocaleDateString("ko")}
+              />
+            </VictoryChart>
+          </div>
         </div>
       </div>
     </div>
