@@ -40,6 +40,8 @@ interface IRestaurantParams {
 }
 
 export const Restaurant = () => {
+  const [orderStarted, setOrderStarted] = useState(false);
+  const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>([]);
   const param = useParams<IRestaurantParams>();
   const { loading, data } = useQuery<restaurant, restaurantVariables>(
     RESTAURANT_QUERY,
@@ -51,11 +53,12 @@ export const Restaurant = () => {
       },
     }
   );
-  const isSelected = (dishId: number) => {
-    return Boolean(orderItems.find((order) => order.dishId === dishId));
+  const getItem = (dishId: number) => {
+    return orderItems.find((order) => order.dishId === dishId);
   };
-  const [orderStarted, setOrderStarted] = useState(false);
-  const [orderItems, setOrderItems] = useState<CreateOrderItemInput[]>([]);
+  const isSelected = (dishId: number) => {
+    return Boolean(getItem(dishId));
+  };
   const triggerStartOrder = () => {
     setOrderStarted(true);
   };
@@ -63,12 +66,42 @@ export const Restaurant = () => {
     if (isSelected(dishId)) {
       return;
     }
-    setOrderItems((current) => [{ dishId }, ...current]);
+    setOrderItems((current) => [{ dishId, options: [] }, ...current]);
   };
   const removeFromOrder = (dishId: number) => {
     setOrderItems((current) =>
       current.filter((dish) => dish.dishId !== dishId)
     );
+  };
+  const addOptionsToItem = (dishId: number, option: any) => {
+    if (!isSelected(dishId)) {
+      return;
+    }
+    const oldItem = getItem(dishId);
+    if (oldItem) {
+      const hasOption = Boolean(
+        oldItem.options?.find((aOption) => aOption.name === option.name)
+      );
+      if (!hasOption) {
+        removeFromOrder(dishId);
+        setOrderItems((current) => [
+          { dishId, options: [option, ...oldItem.options!] },
+          ...current,
+        ]);
+      }
+    }
+  };
+  const getOptionFromItem = (
+    item: CreateOrderItemInput,
+    optionName: string
+  ) => {
+    return item.options?.find((option) => option.name === optionName);
+  };
+  const isOptionSelected = (dishId: number, optionName: string) => {
+    const item = getItem(dishId);
+    if (item) {
+      return Boolean(getOptionFromItem(item, optionName));
+    }
   };
   console.log(orderItems);
   return (
@@ -109,7 +142,28 @@ export const Restaurant = () => {
               options={dish.options}
               addItemToOrder={addItemToOrder}
               removeFromOrder={removeFromOrder}
-            />
+            >
+              {dish.options?.map((option, index) => (
+                <span
+                  onClick={() =>
+                    addOptionsToItem
+                      ? addOptionsToItem(dish.id, {
+                          name: option.name,
+                        })
+                      : null
+                  }
+                  key={index}
+                  className={`flex items-center border ${
+                    isOptionSelected(dish.id, option.name)
+                      ? "border-gray-800"
+                      : ""
+                  }`}
+                >
+                  <h6>{option.name}</h6>
+                  <h6 className="ml-2 text-sm opacity-75">$({option.extra})</h6>
+                </span>
+              ))}
+            </Dish>
           ))}
         </div>
       </div>
