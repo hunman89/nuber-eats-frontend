@@ -148,6 +148,9 @@ export const Restaurant = () => {
     createOrderVariables
   >(CREATE_ORDER_MUTATION, { onCompleted });
   const triggerConfirmOrder = () => {
+    if (placingOrder) {
+      return;
+    }
     if (orderItems.length === 0) {
       alert("Can't place empty order");
       return;
