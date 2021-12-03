@@ -1,6 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { ok } from "assert";
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useHistory, useParams } from "react-router-dom";
 import { Dish } from "../../components/dish";
 import { DishOption } from "../../components/dish-option";
@@ -164,6 +165,9 @@ export const Restaurant = () => {
   };
   return (
     <div>
+      <Helmet>
+        <title>{data?.restaurant.restaurant?.name} | Nuber Eats</title>
+      </Helmet>
       <div
         className="bg-gray-800 bg-center bg-cover py-48"
         style={{
