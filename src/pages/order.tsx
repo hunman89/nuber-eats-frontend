@@ -1,9 +1,12 @@
-import { gql, useQuery, useSubscription } from "@apollo/client";
+import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import { FULL_ORDER_FRAGMENT } from "../fragments";
+import { useMe } from "../hooks/useMe";
+import { editOrder, editOrderVariables } from "../__generated__/editOrder";
 import { getOrder, getOrderVariables } from "../__generated__/getOrder";
+import { OrderStatus, UserRole } from "../__generated__/globalTypes";
 import {
   orderUpdates,
   orderUpdatesVariables,
@@ -31,12 +34,25 @@ const ORDER_SUBSCRIPTION = gql`
   ${FULL_ORDER_FRAGMENT}
 `;
 
+const EDIT_ORDER = gql`
+  mutation editOrder($input: EditOrderInput!) {
+    editOrder(input: $input) {
+      ok
+      error
+    }
+  }
+`;
+
 interface IParams {
   id: string;
 }
 
 export const Order = () => {
   const params = useParams<IParams>();
+  const { data: userData } = useMe();
+  const [editOrderMutation] = useMutation<editOrder, editOrderVariables>(
+    EDIT_ORDER
+  );
   const { data, subscribeToMore } = useQuery<getOrder, getOrderVariables>(
     GET_ORDER,
     {
@@ -75,7 +91,16 @@ export const Order = () => {
       });
     }
   }, [data]);
-
+  const onButtonClick = (newStatus: OrderStatus) => {
+    editOrderMutation({
+      variables: {
+        input: {
+          id: +params.id,
+          status: newStatus,
+        },
+      },
+    });
+  };
   return (
     <div className="mt-32 container flex justify-center">
       <Helmet>
@@ -101,7 +126,7 @@ export const Order = () => {
               {data?.getOrder.order?.customer?.email}
             </span>
           </div>
-          <div className="border-t pt-5 border-gray-700">
+          <div className="border-t border-b py-5 border-gray-700">
             Driver:{" "}
             <span className="font-medium">
               {data?.getOrder.order?.driver?.email
@@ -109,11 +134,37 @@ export const Order = () => {
                 : "Not yet."}
             </span>
           </div>
-          <div className="border-t border-gray-700">
+          {userData?.me.role === "Client" && (
             <h4 className="w-full text-center font-medium text-xl py-10 text-lime-600">
               {data?.getOrder.order?.status}
             </h4>
-          </div>
+          )}
+          {userData?.me.role === UserRole.Owner && (
+            <>
+              {data?.getOrder.order?.status === OrderStatus.Pending && (
+                <button
+                  onClick={() => onButtonClick(OrderStatus.Cooking)}
+                  className="btn"
+                >
+                  Accept Order
+                </button>
+              )}
+              {data?.getOrder.order?.status === OrderStatus.Cooking && (
+                <button
+                  onClick={() => onButtonClick(OrderStatus.Cooked)}
+                  className="btn"
+                >
+                  Order Cooked
+                </button>
+              )}
+              {data?.getOrder.order?.status !== OrderStatus.Pending &&
+                data?.getOrder.order?.status !== OrderStatus.Cooking && (
+                  <h4 className="w-full text-center font-medium text-xl py-10 text-lime-600">
+                    {data?.getOrder.order?.status}
+                  </h4>
+                )}
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import React from "react";
 interface IDishOptionProps {
   isSelected: boolean;
   name: string;
-  extra: number | null;
+  extra?: number | null;
   dishId: number;
   addOptionsToItem: (dishId: number, optionName: string) => void;
   removeOptionFromItem: (dishId: number, optionName: string) => void;
@@ -32,7 +32,7 @@ export const DishOption: React.FC<IDishOptionProps> = ({
       }`}
     >
       <span>{name}</span>
-      {extra && <span className="ml-2 text-sm opacity-75">$({extra})</span>}
+      <span className="ml-2 text-sm opacity-75">$({extra})</span>
     </span>
   );
 };
