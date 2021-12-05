@@ -165,6 +165,31 @@ export const Order = () => {
                 )}
             </>
           )}
+          {userData?.me.role === UserRole.Delivery && (
+            <>
+              {data?.getOrder.order?.status === OrderStatus.Cooked && (
+                <button
+                  onClick={() => onButtonClick(OrderStatus.PickedUp)}
+                  className="btn"
+                >
+                  Pick Up
+                </button>
+              )}
+              {data?.getOrder.order?.status === OrderStatus.PickedUp && (
+                <button
+                  onClick={() => onButtonClick(OrderStatus.Delivered)}
+                  className="btn"
+                >
+                  Order Deliverd
+                </button>
+              )}
+            </>
+          )}
+          {data?.getOrder.order?.status === OrderStatus.Delivered && (
+            <h4 className="w-full text-center font-medium text-xl py-10 text-lime-600">
+              Thank you for using Nuber Eats
+            </h4>
+          )}
         </div>
       </div>
     </div>
