@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@testing-library/cypress": "^8.0.2",
+    "@types/google.maps": "^3.47.0",
     "@types/react-router-dom": "^5.3.0",
     "autoprefixer": "^10.3.6",
     "mock-apollo-client": "^1.2.0",
